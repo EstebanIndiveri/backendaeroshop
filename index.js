@@ -1,9 +1,10 @@
 import express from 'express';
 import products from './db/products.js';
 import dotenv from 'dotenv';
+import connectDB from './config/db.js';
 
 dotenv.config();
-
+connectDB();
 const app=express();
 
 app.get('/api/products',(req,res)=>{
