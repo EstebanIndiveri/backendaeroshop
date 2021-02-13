@@ -63,3 +63,27 @@ export const registerUser=asyncHandler(async(req,res)=>{
     return res.status(400).send({message:'Invalid user data , try again'})
    }
 })
+
+// @desc update user profile
+// @route PUT /api/users/profile
+// @access Private
+export const updateUserProfile=asyncHandler(async(req,res)=>{
+    const user=await User.findById(req.user._id)
+    if(user){
+        user.name=req.body.name || user.name;
+        user.email=req.body.email || user.email;
+    if(req.body.password){
+        user.password=req.body.password
+    }
+    const updateUser=await user.save();
+        return res.json({
+            _id:updateUser._id,
+            name:updateUser.name,
+            email:updateUser.email,
+            isAdmin:updateUser.isAdmin,
+            token:generateToken(updateUser._id),
+        })
+    }else{
+        return res.status(404).send({message:'User not found'})
+    }
+})
