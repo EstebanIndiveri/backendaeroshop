@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.get('/',asyncHandler( async(req,res)=>{
     const products=await Product.find({})
-
+    // return res.status(404).send({message:'No authorized'})
     res.json(products);
 }))
 // @desc Fetch sigle products
