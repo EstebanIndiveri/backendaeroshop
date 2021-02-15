@@ -57,3 +57,14 @@ export const updateOrderToPaid=asyncHandler(async(req,res)=>{
         return res.status(404).send({message:'Order not found'})
     }
  })
+
+ // @desc get loggeed in user orders
+// @route Get /api/orders/myorders
+// @access private
+export const getMyOrders=asyncHandler(async(req,res)=>{
+    const orders=await Order.find({user:req.user._id});
+    if(!orders){
+        return res.stats(404).send({message:'Not found orders for this user'})
+    }
+   return res.json(orders);
+ })
