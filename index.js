@@ -9,6 +9,11 @@ import orderRoutes from './routes/orderRoutes.js';
 import { errorHandler, notFound } from './middleware/errroMiddleware.js';
 import mercadopago from 'mercadopago';
 
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const stripe = require('stripe')('pk_test_51ILXZNGrmcGmCK47uGT7R2bf8O0Rqh7g2v623h9PZg54aoHRlCNGYWgYFnTVDiNsGG9oTwxKSZcPg1YZu5StfT3l00V1vBOcVE');
+
+
 // Modelo de ordenes
 import Order from './models/Order.js';
 
@@ -106,9 +111,39 @@ app.get('/feedback', function(request, response) {
 	})
 });
 
-
-
 // finish mp
+
+
+// Start stripe?
+// stripe();
+
+app.post('/create-checkout-session', async (req, res) => {
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ['card'],
+    line_items: [
+      {
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: 'Stubborn Attachments',
+            images: ['https://i.imgur.com/EHyR2nP.png'],
+          },
+          unit_amount: 2000,
+        },
+        quantity: 1,
+      },
+    ],
+    mode: 'payment',
+    success_url: `http://localhost:3000/`,
+    cancel_url: `http://localhost:3000/`,
+  });
+  res.json({ id: session.id });
+});
+
+
+
+// finish stripe
+
 
 // others routes
 app.use('/api/products',productRoutes);
