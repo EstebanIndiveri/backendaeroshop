@@ -8,6 +8,10 @@ import userRoutes from './routes/userRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import { errorHandler, notFound } from './middleware/errroMiddleware.js';
 import mercadopago from 'mercadopago';
+
+// Modelo de ordenes
+import Order from './models/Order.js';
+
 // import PaymentController from './controllers/PaymentController.js';
 // import PaymentService from './services/PaymentService.js';
 
@@ -26,8 +30,9 @@ credentials: true
 // app.post("/webhook", (req, res) => PaymentInstance.webhook(req, res));
 mercadopago.configurations.setAccessToken(process.env.ACCESS_TOKEN_API); 
 app.use(express.urlencoded({ extended: false }));
-app.post("/create_preference", (req, res) => {
-
+app.post("/create_preference/:id", async (req, res) => {
+  let orderId=req.params.id;
+  let order= await Order.findById(orderId);
 	let preference = {
 		items: [{
 			title: req.body.description,
@@ -35,19 +40,62 @@ app.post("/create_preference", (req, res) => {
 			quantity: Number(req.body.quantity),
 		}],
 		back_urls: {
-			"success": "http://localhost:5000/feedback",
-			"failure": "http://localhost:5000/feedback",
-			"pending": "http://localhost:5000/feedback"
+			"success": `http://localhost:3000/`,
+			"failure": "http://localhost:3000/",
+			"pending": "http://localhost:3000/"
 		},
+    payment_methods: {
+      excluded_payment_methods: [
+        {
+          id: "amex"
+        }
+      ],
+      excluded_payment_types: [{ id: "atm" }],
+      installments: 6,
+    },
+    notification_url:"https://hookb.in/VGdz7EGKm0hE22bwzjO6",
+    // notification_url:"http://localhost:5000/webhook",
 		auto_return: 'approved',
 	};
-  console.log(preference)
+  // console.log(preference)
 	mercadopago.preferences.create(preference)
-		.then(function (response) {
-			res.json({id :response.body.id})
+		.then(async function(response) {
+      // console.log(order);
+      if(order){
+        order.isPaid=true;
+        order.paidAt=Date.now();
+        order.paymentResult={
+            id:Math.random().toFixed(10),//change to req.body.id 
+            status:'COMPLETED',//Change to req.body.type
+            update_time:Date.now(), //change to req.body.date_created
+            email_address:"example@example.com"// change to req.body.payer.email_address?
+        }
+        
+        const updatedOrder=await order.save();
+  			// res.json({id :response.body.id})
+         res.json(updatedOrder);
+    }else{
+        return res.status(404).send({message:'Order not found'})
+    }
+			// res.json({id :response.body.id})
 		}).catch(function (error) {
 			console.log(error);
 		});
+});
+
+app.post("/webhook", (req, res) => {
+  if (req.method === "POST") {
+    console.log(req.body.type);
+    let body = "";
+    req.on("data", chunk => {
+      body += chunk.toString();
+    });
+    req.on("end", () => {
+      console.log(body, "webhook response");
+      res.end("ok");
+    });
+  }
+  return res.status(201);
 });
 
 app.get('/feedback', function(request, response) {
