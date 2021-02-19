@@ -49,15 +49,15 @@ app.post("/create_preference/:id", async (req, res) => {
 			"failure": "http://localhost:3000/",
 			"pending": "http://localhost:3000/"
 		},
-    payment_methods: {
-      excluded_payment_methods: [
-        {
-          id: "amex"
-        }
-      ],
-      excluded_payment_types: [{ id: "atm" }],
-      installments: 6,
-    },
+    // payment_methods: {
+    //   excluded_payment_methods: [
+    //     {
+    //       id: "amex"
+    //     }
+    //   ],
+    //   excluded_payment_types: [{ id: "atm" }],
+    //   installments: 6,
+    // },
     notification_url:"https://hookb.in/VGdz7EGKm0hE22bwzjO6",
     // notification_url:"http://localhost:5000/webhook",
 		auto_return: 'approved',
@@ -77,8 +77,8 @@ app.post("/create_preference/:id", async (req, res) => {
         }
         
         const updatedOrder=await order.save();
-  			// res.json({id :response.body.id})
-         res.json(updatedOrder);
+  			res.json({id :response.body.id,updatedOrder:updatedOrder})
+        //  res.json(updatedOrder);
     }else{
         return res.status(404).send({message:'Order not found'})
     }
