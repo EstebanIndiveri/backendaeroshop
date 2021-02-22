@@ -8,7 +8,7 @@ import productRoutes from './routes/productRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
-
+import morgan from 'morgan';
 import { errorHandler, notFound } from './middleware/errroMiddleware.js';
 import mercadopago from 'mercadopago';
 
@@ -26,6 +26,11 @@ import Order from './models/Order.js';
 dotenv.config();
 connectDB();
 const app=express();
+
+if(process.env.NODE_ENV==='development'){
+  app.use(morgan('dev'))
+}
+
 app.use(express.json())
 app.use(cors({origin:function(origin,callback){
   callback(null, origin);
