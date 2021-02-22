@@ -68,3 +68,13 @@ export const getMyOrders=asyncHandler(async(req,res)=>{
     }
    return res.json(orders);
  })
+  // @desc get all orders
+// @route Get /api/orders
+// @access private
+export const getOrders=asyncHandler(async(req,res)=>{
+    const orders=await Order.find({}).populate('user','id name');
+    if(!orders){
+        return res.stats(404).send({message:'Not found orders'})
+    }
+   return res.json(orders);
+ })
