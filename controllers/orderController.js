@@ -78,3 +78,18 @@ export const getOrders=asyncHandler(async(req,res)=>{
     }
    return res.json(orders);
  })
+
+ // @desc Update order to delivered
+// @route Get /api/orders/:ID/deliver
+// @access private 
+export const updateOrderToDeliver=asyncHandler(async(req,res)=>{
+    const order=await Order.findById(req.params.id);
+    if(order){
+        order.isDelivered=true;
+        order.deliveredAt=Date.now();
+        const updatedOrder=await order.save();
+        return res.json(updatedOrder);
+    }else{
+        return res.status(404).send({message:'Order not found'})
+    }
+ })
