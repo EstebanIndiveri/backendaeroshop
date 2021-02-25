@@ -8,7 +8,7 @@ import asyncHandler from 'express-async-handler'
     // return res.status(404).send({message:'No authorized'})
 
 export const getProducts=asyncHandler(async(req,res)=>{
-    const pageSize=2
+    const pageSize=10;
     const page=Number (req.query.pageNumber) || 1;
     const keyword=req.query.keyword?{
         name:{
@@ -117,5 +117,17 @@ export const updateProduct=asyncHandler(async(req,res)=>{
     }else{
         return res.status(404).json({message:'product not found'})
     }
+
+})
+
+
+
+// @desc GET top reatd products
+// @route GET /api/products/top
+// @access public
+export const getTopProducts=asyncHandler(async(req,res)=>{
+    const products=await Product.find({}).sort({rating:-1}).limit(3);
+
+    return res.json(products); 
 
 })
