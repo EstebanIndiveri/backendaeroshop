@@ -1,7 +1,7 @@
 import express from 'express';
 import path from 'path';
 // import products from './db/products.js';
-import * as cors from 'cors';
+import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import productRoutes from './routes/productRoutes.js';
@@ -26,7 +26,8 @@ import Order from './models/Order.js';
 dotenv.config();
 connectDB();
 const app=express();
-app.use(cors({origin:true}));
+const corsVal=cors({origin:true})
+app.use(corsVal);
 
 if(process.env.NODE_ENV==='development'){
   app.use(morgan('dev'))
