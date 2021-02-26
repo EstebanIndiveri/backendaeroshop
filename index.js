@@ -32,11 +32,7 @@ if(process.env.NODE_ENV==='development'){
 }
 
 app.use(express.json())
-app.use(cors({origin:function(origin,callback){
-  callback(null, origin);
-},
-credentials: true
-}));
+app.use(cors());
 // mercadoPago API
 // const PaymentInstance = new PaymentController(new PaymentService());
 // app.post("/payment/new", (req, res) =>PaymentInstance.getMercadoPagoLink(req, res));
