@@ -1,7 +1,7 @@
 import express from 'express';
 import path from 'path';
 // import products from './db/products.js';
-import cors from 'cors';
+import * as cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import productRoutes from './routes/productRoutes.js';
@@ -22,7 +22,8 @@ import Order from './models/Order.js';
 
 // import PaymentController from './controllers/PaymentController.js';
 // import PaymentService from './services/PaymentService.js';
-
+// const corsval=cors({origin:true})
+app.use(cors({origin:true}));
 dotenv.config();
 connectDB();
 const app=express();
@@ -32,7 +33,7 @@ if(process.env.NODE_ENV==='development'){
 }
 
 app.use(express.json())
-app.use(cors());
+
 // mercadoPago API
 // const PaymentInstance = new PaymentController(new PaymentService());
 // app.post("/payment/new", (req, res) =>PaymentInstance.getMercadoPagoLink(req, res));
