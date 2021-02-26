@@ -23,10 +23,10 @@ import Order from './models/Order.js';
 // import PaymentController from './controllers/PaymentController.js';
 // import PaymentService from './services/PaymentService.js';
 // const corsval=cors({origin:true})
-app.use(cors({origin:true}));
 dotenv.config();
 connectDB();
 const app=express();
+app.use(cors({origin:true}));
 
 if(process.env.NODE_ENV==='development'){
   app.use(morgan('dev'))
